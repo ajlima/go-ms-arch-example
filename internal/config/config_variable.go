@@ -26,11 +26,12 @@ const (
 	DATABASE_NAME     = "DATABASE_NAME"
 	DATABASE_USERNAME = "DATABASE_USERNAME"
 	DATABASE_PASSWORD = "DATABASE_PASSWORD"
-	LOG_FILE          = "LOG_FILE"
 	KAFKA_BROKERS     = "KAFKA_BROKERS"
 	KAFKA_IN_TOPIC    = "KAFKA_IN_TOPIC"
 	KAFKA_OUT_TOPIC   = "KAFKA_OUT_TOPIC"
 	PROFILE           = "PROFILE"
+	LOG_FILE          = "LOG_FILE"
+	LOG_LEVEL         = "LOG_LEVEL"
 )
 
 var (
@@ -99,12 +100,17 @@ var (
 		LOG_FILE: {
 			Id:          LOG_FILE,
 			Description: "Path to logfile",
-			Default:     "./" + filepath.Base(os.Args[0]+".log"),
+			Default:     "stdout",
+		},
+		LOG_LEVEL: {
+			Id:          LOG_LEVEL,
+			Description: "Log level (panic,fatal,error,warn,info,debug,trace)",
+			Default:     "debug",
 		},
 	}
 )
 
-func NewConfig(viper *viper.Viper) *viper.Viper {
+func ConfigureEnvironment(viper *viper.Viper) *viper.Viper {
 	viper.AutomaticEnv()
 	configureDefaults(viper)
 	bindCommandFlags(viper)
