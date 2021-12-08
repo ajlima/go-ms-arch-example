@@ -18,20 +18,23 @@ type Service struct {
 }
 
 const (
-	SERVICE_NAME      = "SERVICE_NAME"
-	HTTP_PORT         = "HTTP_PORT"
-	DATABASE_URL      = "DATABASE_URL"
-	DATABASE_PORT     = "DATABASE_PORT"
-	DATABASE_TYPE     = "DATABASE_TYPE"
-	DATABASE_NAME     = "DATABASE_NAME"
-	DATABASE_USERNAME = "DATABASE_USERNAME"
-	DATABASE_PASSWORD = "DATABASE_PASSWORD"
-	KAFKA_BROKERS     = "KAFKA_BROKERS"
-	KAFKA_IN_TOPIC    = "KAFKA_IN_TOPIC"
-	KAFKA_OUT_TOPIC   = "KAFKA_OUT_TOPIC"
-	PROFILE           = "PROFILE"
-	LOG_FILE          = "LOG_FILE"
-	LOG_LEVEL         = "LOG_LEVEL"
+	SERVICE_NAME            = "SERVICE_NAME"
+	HTTP_PORT               = "HTTP_PORT"
+	DATABASE_URL            = "DATABASE_URL"
+	DATABASE_PORT           = "DATABASE_PORT"
+	DATABASE_TYPE           = "DATABASE_TYPE"
+	DATABASE_NAME           = "DATABASE_NAME"
+	DATABASE_USERNAME       = "DATABASE_USERNAME"
+	DATABASE_PASSWORD       = "DATABASE_PASSWORD"
+	KAFKA_BROKERS           = "KAFKA_BROKERS"
+	KAFKA_PARTITION         = "KAFKA_PARTITION"
+	KAFKA_IN_TOPIC          = "KAFKA_IN_TOPIC"
+	KAFKA_IN_CONSUMER_GROUP = "KAFKA_IN_CONSUMER_GROUP"
+	KAFKA_IN_OFFSET         = "KAFKA_IN_OFFSET"
+	KAFKA_OUT_TOPIC         = "KAFKA_OUT_TOPIC"
+	PROFILE                 = "PROFILE"
+	LOG_FILE                = "LOG_FILE"
+	LOG_LEVEL               = "LOG_LEVEL"
 )
 
 var (
@@ -82,10 +85,25 @@ var (
 			Description: "Kafka brokers separated by ,",
 			Default:     "localhost:9092",
 		},
+		KAFKA_PARTITION: {
+			Id:          KAFKA_PARTITION,
+			Description: "Kafka partition",
+			Default:     "0",
+		},
 		KAFKA_IN_TOPIC: {
 			Id:          KAFKA_IN_TOPIC,
 			Description: "Name of inbound kafka topic",
 			Default:     "in-" + filepath.Base(os.Args[0]),
+		},
+		KAFKA_IN_CONSUMER_GROUP: {
+			Id:          KAFKA_IN_CONSUMER_GROUP,
+			Description: "Name of inbound consumer group",
+			Default:     "",
+		},
+		KAFKA_IN_OFFSET: {
+			Id:          KAFKA_IN_OFFSET,
+			Description: "Name of inbound offset position",
+			Default:     "",
 		},
 		KAFKA_OUT_TOPIC: {
 			Id:          KAFKA_OUT_TOPIC,

@@ -1,6 +1,10 @@
 package handler
 
 import (
+	"encoding/json"
+	"log"
+	"net/http"
+
 	"github.com/ajlima/go-ms-arch-example/internal/app"
 	"github.com/ajlima/go-ms-arch-example/internal/http/datastruct"
 	"github.com/ajlima/go-ms-arch-example/internal/service"
@@ -30,8 +34,20 @@ func (h RegisterSaleHandler) configureRoutes() {
 func (h RegisterSaleHandler) registerSale(c *gin.Context) {
 	var transaction datastruct.Transaction
 	if err := c.Bind(&transaction); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
-	} else {
-		c.JSON(200, gin.H{"result": transaction})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+	rowdata, err := json.Marshal(transaction)
+	if err != nil {
+		log.Panic("Error transforming body in []byte: ", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	err = h.registerSaleService.SendMessage(rowdata)
+	if err != nil {
+		log.Panic("Error sending message to kakfa: ", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"result": "OK"})
 }
