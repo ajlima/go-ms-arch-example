@@ -1,0 +1,24 @@
+{
+    "id": "1",
+    "date": "2021-12-08T00:00:00Z",
+    "customer": {
+        "id": "customer1",
+        "name": "Alexandre",
+        "phone": "1212121",
+        "address": "Rua Marechal Costa Gomes, 16",
+        "birth": "1972-09-24T00:00:00Z"
+    },
+    "items": [{
+        "id": "1",
+        "product": {
+            "id": "1",
+            "description": "Ball",
+            "type": "Sport",
+            "subType": "Squash"
+        },
+        "price": 5.70,
+        "quatity": 3,
+        "total": 17.1
+    }],
+    "total": 17.1
+}
