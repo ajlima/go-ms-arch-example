@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 	"time"
 
@@ -17,6 +16,8 @@ import (
 	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	swaggerFiles "github.com/swaggo/files"
+	ginswagger "github.com/swaggo/gin-swagger"
 	ginlogrus "github.com/toorop/gin-logrus"
 )
 
@@ -38,16 +39,6 @@ func init() {
 		log.Printf("* %s = %s\n", key, vip.GetString(key))
 	}
 
-	partition, err := strconv.Atoi(viper.GetString(config.KAFKA_PARTITION))
-	if err != nil {
-		partition = 0
-	}
-
-	kafkaConn, err = kafka.DialLeader(context.Background(), "tcp", viper.GetString(config.KAFKA_BROKERS), viper.GetString(config.KAFKA_OUT_TOPIC), partition)
-	if err != nil {
-		log.Panic("failed to dial leader:", err)
-	}
-
 	appContext = app.NewApplicationContext(
 		vip,
 		log,
@@ -55,14 +46,37 @@ func init() {
 	)
 }
 
+// @title           Microservice GO example
+// @version         1.0
+// @description     This is a sample server celler server.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+// @BasePath  /api/v1
+
+// @securityDefinitions.basic  BasicAuth
+
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in                          header
+// @name                        Authorization
 func main() {
 	defer kafkaConn.Close()
 
 	router := gin.New()
 	router.Use(ginlogrus.Logger(log), gin.Recovery())
+	apiV1 := router.Group("/api/v1")
+
+	router.GET("/swagger/*any", ginswagger.WrapHandler(swaggerFiles.Handler))
 
 	registerSaleService := service.NewRegisterSaleService(appContext)
-	handler.NewRegisterSaleHandler(appContext, registerSaleService, router)
+	handler.NewRegisterSaleHandler(appContext, registerSaleService, apiV1)
 
 	srv := &http.Server{
 		Addr:    ":" + vip.GetString(config.HTTP_PORT),

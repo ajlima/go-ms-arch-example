@@ -34,3 +34,8 @@ type Transaction struct {
 	Items    []TransactionProduct `"json": "items"`
 	Total    float64              `"json": "total"`
 }
+
+type Err struct {
+	Error string `"json": "error"`
+	Msg   string `"json": "message"`
+}

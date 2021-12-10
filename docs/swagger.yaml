@@ -1,0 +1,117 @@
+basePath: /api/v1
+definitions:
+  datastruct.Customer:
+    properties:
+      address:
+        type: string
+      birthDate:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  datastruct.Err:
+    properties:
+      error:
+        type: string
+      msg:
+        type: string
+    type: object
+  datastruct.Product:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      subType:
+        type: string
+      type:
+        type: string
+    type: object
+  datastruct.Transaction:
+    properties:
+      customer:
+        $ref: '#/definitions/datastruct.Customer'
+      date:
+        type: string
+      id:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/datastruct.TransactionProduct'
+        type: array
+      total:
+        type: number
+    type: object
+  datastruct.TransactionProduct:
+    properties:
+      id:
+        type: string
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/datastruct.Product'
+      quantity:
+        type: integer
+      total:
+        type: number
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Microservice GO example
+  version: "1.0"
+paths:
+  /register/sale:
+    post:
+      consumes:
+      - application/json
+      description: Register one sale record
+      parameters:
+      - description: Register sale
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/datastruct.Transaction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/datastruct.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/datastruct.Err'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/datastruct.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/datastruct.Err'
+      summary: Register one sale
+      tags:
+      - sale
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  BasicAuth:
+    type: basic
+swagger: "2.0"

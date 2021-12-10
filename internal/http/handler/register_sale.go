@@ -13,11 +13,11 @@ import (
 
 type RegisterSaleHandler struct {
 	applicationContext  *app.ApplicationContext
+	router              *gin.RouterGroup
 	registerSaleService service.RegisterSaleService
-	router              *gin.Engine
 }
 
-func NewRegisterSaleHandler(appContext *app.ApplicationContext, rss service.RegisterSaleService, router *gin.Engine) RegisterSaleHandler {
+func NewRegisterSaleHandler(appContext *app.ApplicationContext, rss service.RegisterSaleService, router *gin.RouterGroup) RegisterSaleHandler {
 	h := RegisterSaleHandler{
 		applicationContext:  appContext,
 		registerSaleService: rss,
@@ -31,6 +31,18 @@ func (h RegisterSaleHandler) configureRoutes() {
 	h.router.POST("/register/sale/", h.registerSale)
 }
 
+// RegisterSale godoc
+// @Summary      Register one sale
+// @Description  Register one sale record
+// @Tags         sale
+// @Accept       json
+// @Produce      json
+// @Param        transaction	body      datastruct.Transaction  true  "Register sale"
+// @Success      200      		{object}  datastruct.Transaction
+// @Failure      400      		{object}  datastruct.Err
+// @Failure      404      		{object}  datastruct.Err
+// @Failure      500      		{object}  datastruct.Err
+// @Router       /register/sale [post]
 func (h RegisterSaleHandler) registerSale(c *gin.Context) {
 	var transaction datastruct.Transaction
 	if err := c.Bind(&transaction); err != nil {
@@ -49,5 +61,5 @@ func (h RegisterSaleHandler) registerSale(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"result": "OK"})
+	c.JSON(http.StatusOK, transaction)
 }
