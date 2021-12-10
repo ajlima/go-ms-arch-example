@@ -65,3 +65,7 @@ To be possible to run this app from localhost we need add one entry on /etc/host
 ```
 127.0.0.1   kafka
 ```
+
+## Stress test
+
+In the directory ./stress you can found one stress script.  This script uses Apache Benchmark (ab) to send 100K request against the service using the sale.json as body of each request.
