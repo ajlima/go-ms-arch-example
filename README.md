@@ -8,12 +8,12 @@ Therefore, this example must implement a microservice that aims to receive reque
 
 I preferred not to use Go-kit, so I chose several frameworks to cover various parts of what I think is fundamental in creating a microservice.
 
-Configuration: Viper
-HTTP: Gin
-Swagger: Gin-swagger
-Logger: Logrus
-Kafka: Kafka-go
-ORM: Gorm
+- Configuration: Viper
+- HTTP: Gin
+- Swagger: Gin-swagger
+- Logger: Logrus
+- Kafka: Kafka-go
+- ORM: Gorm
 
 As a development architecture I chose something similar to Spring, with dependency injection by the constructor and an initial context concept.
 
