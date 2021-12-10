@@ -6,7 +6,7 @@ As a case study, I chose to develop something similar to what we do every day at
 
 Therefore, this example must implement a microservice that aims to receive requests and send them to a kafka topic which will be consumed by another microservice and saved in a database.
 
-I preferred not to use Go-kit, so I chose several frameworks to cover various parts of what I think is fundamental in creating a microservice.
+I preferred not to use Go-kit, so I chose several frameworks to cover various parts of what I think are fundamental to create a microservice.
 
 - Configuration: Viper
 - HTTP: Gin
