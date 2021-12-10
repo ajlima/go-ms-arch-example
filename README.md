@@ -23,7 +23,15 @@ As a development architecture I chose something similar to Spring, with dependen
 make build
 ```
 
-## To run from localhost:
+## To run from docker:
+
+Use this command to startup everything that is necessary to run this application, including kafka, zookeaper, postgres and the application
+
+```
+docker-compose up
+```
+
+## To execute from localhost:
 
 ```
 GIN_MODE=release out/bin/ms-arch-example --HTTP_PORT=8081 --KAFKA_OUT_TOPIC=sales_transactions --KAFKA_BROKERS=kafka:9092
@@ -56,10 +64,4 @@ To be possible to run this app from localhost we need add one entry on /etc/host
 
 ```
 127.0.0.1   kafka
-```
-
-## To run from docker:
-
-```
-docker-compose up
 ```
