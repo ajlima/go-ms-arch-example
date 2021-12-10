@@ -19,11 +19,15 @@ As a development architecture I chose something similar to Spring, with dependen
 
 ## To build this app:
 
+```
 make build
+```
 
 ## To run from localhost:
 
+```
 GIN_MODE=release out/bin/ms-arch-example --HTTP_PORT=8081 --KAFKA_OUT_TOPIC=sales_transactions --KAFKA_BROKERS=kafka:9092
+```
 
 INFO[0000] *                                            
 INFO[0000] * Starting with following configuration:     
@@ -50,8 +54,12 @@ Some of these variables are configured with default values.
 
 To be possible to run this app from localhost we need add one entry on /etc/hosts like this one:
 
+```
 127.0.0.1   kafka
+```
 
 ## To run from docker:
 
+```
 docker-compose up
+```
