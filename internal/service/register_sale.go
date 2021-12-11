@@ -23,7 +23,7 @@ func (r RegisterSaleService) SendMessage(ctx context.Context, msg []byte) (err e
 
 	kafkaConnection, err := r.applicationContext.KafkaConnectionPool.BorrowObject(ctx)
 	if err != nil {
-		log.Fatal("It was impossible to get one connection from kafka connection pool")
+		log.Fatal("It was impossible to get one connection from kafka connection pool", err)
 	}
 	defer r.applicationContext.KafkaConnectionPool.ReturnObject(ctx, kafkaConnection)
 

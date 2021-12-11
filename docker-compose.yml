@@ -23,6 +23,7 @@ services:
         - KAFKA_PARTITION=0
         - KAFKA_OFFSET=0
         - HTTP_REQUEST_LOG=OFF
+        - GIN_MODE=release
   db:
     image: postgres
     ports:

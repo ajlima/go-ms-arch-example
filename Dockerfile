@@ -2,4 +2,5 @@ FROM golang:latest
 WORKDIR /app
 ADD . .
 RUN go mod download
-CMD go run cmd/main.go
+RUN make build
+CMD ./out/bin/ms-arch-example
