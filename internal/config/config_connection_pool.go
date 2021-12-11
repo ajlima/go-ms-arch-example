@@ -4,7 +4,6 @@ import (
 	"context"
 	"runtime"
 	"strconv"
-	"time"
 
 	"github.com/ajlima/go-ms-arch-example/internal/app"
 	pool "github.com/jolestar/go-commons-pool/v2"
@@ -25,8 +24,9 @@ func NewKafkaConnectionPool(ctx context.Context, appContext *app.ApplicationCont
 	}
 
 	pconfig := pool.NewDefaultPoolConfig()
-	pconfig.MaxTotal = runtime.NumCPU()
-	pconfig.TimeBetweenEvictionRuns = 2 * time.Second
+	pconfig.MaxTotal = runtime.NumCPU() * 2
+	pconfig.MinIdle = runtime.NumCPU() / 2
+	pconfig.MaxIdle = runtime.NumCPU() * 2
 
 	p := pool.NewObjectPool(ctx, factory, pconfig)
 
@@ -44,13 +44,12 @@ func (f *KafkaConnectionFactory) MakeObject(ctx context.Context) (*pool.PooledOb
 	}
 
 	kafkaConn, err := kafka.DialLeader(
-		context.Background(),
+		ctx,
 		"tcp",
 		f.applicationContext.Viper.GetString(KAFKA_BROKERS),
 		f.applicationContext.Viper.GetString(KAFKA_OUT_TOPIC),
 		partition,
 	)
-
 	if err != nil {
 		log.Panic("Failed to dial leader: ", err)
 	}
