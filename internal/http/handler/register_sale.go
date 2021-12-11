@@ -4,10 +4,14 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/ajlima/go-ms-arch-example/internal/app"
+	"github.com/ajlima/go-ms-arch-example/internal/config"
 	"github.com/ajlima/go-ms-arch-example/internal/http/datastruct"
 	"github.com/ajlima/go-ms-arch-example/internal/service"
+	"github.com/ajlima/go-ms-arch-example/internal/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,6 +48,11 @@ func (h RegisterSaleHandler) configureRoutes() {
 // @Failure      500      		{object}  datastruct.Err
 // @Router       /register/sale [post]
 func (h RegisterSaleHandler) registerSale(c *gin.Context) {
+	logLevel := h.applicationContext.Viper.GetString(config.LOG_LEVEL)
+	if strings.ToUpper(logLevel) == "DEBUG" {
+		defer util.TrackTime(h.applicationContext.Log, time.Now(), "%s elapsed on registerSaleHandler")
+	}
+
 	var transaction datastruct.Transaction
 	if err := c.Bind(&transaction); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -55,7 +64,7 @@ func (h RegisterSaleHandler) registerSale(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	err = h.registerSaleService.SendMessage(rowdata)
+	err = h.registerSaleService.SendMessage(c.Request.Context(), rowdata)
 	if err != nil {
 		log.Panic("Error sending message to kakfa: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

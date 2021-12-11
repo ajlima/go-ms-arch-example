@@ -14,6 +14,7 @@ import (
 	"github.com/ajlima/go-ms-arch-example/internal/http/handler"
 	"github.com/ajlima/go-ms-arch-example/internal/service"
 	"github.com/gin-gonic/gin"
+	pool "github.com/jolestar/go-commons-pool/v2"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
@@ -24,6 +25,7 @@ import (
 var (
 	vip        = viper.GetViper()
 	log        = logrus.New()
+	cp         *pool.ObjectPool
 	appContext *app.ApplicationContext
 )
 
@@ -42,6 +44,10 @@ func init() {
 		vip,
 		log,
 	)
+
+	ctx := context.Background()
+	cp = config.NewKafkaConnectionPool(ctx, appContext)
+	appContext.SetKafkaConnectionPool(cp)
 }
 
 // @title           Microservice GO example
@@ -112,6 +118,8 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal("Server Shutdown:", err)
 	}
+	cp.Close(ctx)
+
 	// catching ctx.Done(). timeout of 1 seconds.
 	<-ctx.Done()
 	log.Info("timeout of 1 seconds.")

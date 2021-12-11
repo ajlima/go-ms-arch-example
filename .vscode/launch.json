@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "cmd/main.go",
-            "args": ["--KAFKA_OUT_TOPIC=sales_transactions", "--KAFKA_BROKERS=localhost:9092"]
+            "args": ["--KAFKA_OUT_TOPIC=sales_transactions", "--KAFKA_BROKERS=localhost:9092", "--HTTP_PORT=8081", "--HTTP_REQUEST_LOG=OFF"]
         }
     ]
 }

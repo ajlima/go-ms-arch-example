@@ -124,7 +124,7 @@ var (
 		LOG_LEVEL: {
 			Id:          LOG_LEVEL,
 			Description: "Log level (panic,fatal,error,warn,info,debug,trace)",
-			Default:     "debug",
+			Default:     "info",
 		},
 		HTTP_REQUEST_LOG: {
 			Id:          HTTP_REQUEST_LOG,

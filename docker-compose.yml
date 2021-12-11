@@ -17,7 +17,7 @@ services:
         - DATABASE_USERNAME=superuser
         - DATABASE_PASSWORD=superuser
         - PROFILE=dev
-        - LOG_LEVEL=debug
+        - LOG_LEVEL=info
         - KAFKA_BROKERS=kafka:9092
         - KAFKA_OUT_TOPIC=sales_transactions
         - KAFKA_PARTITION=0

@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/gin-gonic/gin v1.7.7
+	github.com/jolestar/go-commons-pool/v2 v2.1.1
 	github.com/segmentio/kafka-go v0.4.25
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/pflag v1.0.5
