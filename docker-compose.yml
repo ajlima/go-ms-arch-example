@@ -22,6 +22,7 @@ services:
         - KAFKA_OUT_TOPIC=sales_transactions
         - KAFKA_PARTITION=0
         - KAFKA_OFFSET=0
+        - HTTP_REQUEST_LOG=OFF
   db:
     image: postgres
     ports:

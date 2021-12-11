@@ -14,7 +14,6 @@ import (
 	"github.com/ajlima/go-ms-arch-example/internal/http/handler"
 	"github.com/ajlima/go-ms-arch-example/internal/service"
 	"github.com/gin-gonic/gin"
-	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
@@ -25,7 +24,6 @@ import (
 var (
 	vip        = viper.GetViper()
 	log        = logrus.New()
-	kafkaConn  *kafka.Conn
 	appContext *app.ApplicationContext
 )
 
@@ -37,13 +35,12 @@ func init() {
 	log.Println("* Starting with following configuration: ")
 	log.Println("*")
 	for _, key := range vip.AllKeys() {
-		log.Printf("* %s = %s\n", key, vip.GetString(key))
+		log.Printf("* %s = %s", key, vip.GetString(key))
 	}
 
 	appContext = app.NewApplicationContext(
 		vip,
 		log,
-		kafkaConn,
 	)
 }
 
@@ -68,8 +65,6 @@ func init() {
 // @in                          header
 // @name                        Authorization
 func main() {
-	defer kafkaConn.Close()
-
 	router := gin.New()
 	router.Use(gin.Recovery())
 
