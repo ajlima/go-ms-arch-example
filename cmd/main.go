@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -70,7 +71,16 @@ func main() {
 	defer kafkaConn.Close()
 
 	router := gin.New()
-	router.Use(ginlogrus.Logger(log), gin.Recovery())
+	router.Use(gin.Recovery())
+
+	// Using this request logging, the number of requests handled by this application will be decreased
+	// if the application need to handle millions of requests per minute this log should be configured to OFF
+	requestLog := strings.ToUpper(viper.GetString(config.HTTP_REQUEST_LOG))
+	switch requestLog {
+	case "YES", "TRUE", "ON":
+		router.Use(ginlogrus.Logger(log))
+	}
+
 	apiV1 := router.Group("/api/v1")
 
 	router.GET("/swagger/*any", ginswagger.WrapHandler(swaggerFiles.Handler))

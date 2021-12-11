@@ -35,6 +35,7 @@ const (
 	PROFILE                 = "PROFILE"
 	LOG_FILE                = "LOG_FILE"
 	LOG_LEVEL               = "LOG_LEVEL"
+	HTTP_REQUEST_LOG        = "HTTP_REQUEST_LOG"
 )
 
 var (
@@ -124,6 +125,11 @@ var (
 			Id:          LOG_LEVEL,
 			Description: "Log level (panic,fatal,error,warn,info,debug,trace)",
 			Default:     "debug",
+		},
+		HTTP_REQUEST_LOG: {
+			Id:          HTTP_REQUEST_LOG,
+			Description: "Turn http request log on (ON|OFF)",
+			Default:     "ON",
 		},
 	}
 )

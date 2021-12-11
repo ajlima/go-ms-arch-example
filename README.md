@@ -2,7 +2,7 @@
 
 The aim of this project is to learn Go.
 
-As a case study, I chose to develop something similar to what we do every day at work.
+As a case study, I chose to develop something similar to what I do every day at work.
 
 Therefore, this example must implement a microservice that aims to receive requests and send them to a kafka topic which will be consumed by another microservice and saved in a database.
 
