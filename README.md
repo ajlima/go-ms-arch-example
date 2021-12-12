@@ -34,7 +34,11 @@ docker-compose up
 ## To execute from localhost:
 
 ```
-GIN_MODE=release out/bin/ms-arch-example --HTTP_PORT=8081 --KAFKA_OUT_TOPIC=sales_transactions --KAFKA_BROKERS=kafka:9092 --LOG_FILE=./ms-arch-example.log
+GIN_MODE=release out/bin/ms-arch-example \
+--HTTP_PORT=8081 \
+--KAFKA_OUT_TOPIC=sales_transactions \
+--KAFKA_BROKERS=kafka:9092 \
+--LOG_FILE=./ms-arch-example.log
 ```
 
 INFO[0000] *                                            
