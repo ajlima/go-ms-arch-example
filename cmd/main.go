@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime"
 	"strings"
 	"syscall"
 	"time"
@@ -13,8 +14,8 @@ import (
 	"github.com/ajlima/go-ms-arch-example/internal/config"
 	"github.com/ajlima/go-ms-arch-example/internal/http/handler"
 	"github.com/ajlima/go-ms-arch-example/internal/service"
+	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gin-gonic/gin"
-	pool "github.com/jolestar/go-commons-pool/v2"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
@@ -25,7 +26,6 @@ import (
 var (
 	vip        = viper.GetViper()
 	log        = logrus.New()
-	cp         *pool.ObjectPool
 	appContext *app.ApplicationContext
 )
 
@@ -45,9 +45,9 @@ func init() {
 		log,
 	)
 
-	ctx := context.Background()
-	cp = config.NewKafkaConnectionPool(ctx, appContext)
-	appContext.SetKafkaConnectionPool(cp)
+	// ctx := context.Background()
+	// cp = config.NewKafkaConnectionPool(ctx, appContext)
+	// appContext.SetKafkaConnectionPool(cp)
 }
 
 // @title           Microservice GO example
@@ -82,11 +82,14 @@ func main() {
 		router.Use(ginlogrus.Logger(log))
 	}
 
+	deliveryChan := make(chan []byte, runtime.NumCPU()*2)
+	closeDelivery := make(chan byte, 1)
+
 	apiV1 := router.Group("/api/v1")
 
 	router.GET("/swagger/*any", ginswagger.WrapHandler(swaggerFiles.Handler))
 
-	registerSaleService := service.NewRegisterSaleService(appContext)
+	registerSaleService := service.NewRegisterSaleService(appContext, deliveryChan)
 	handler.NewRegisterSaleHandler(appContext, registerSaleService, apiV1)
 
 	srv := &http.Server{
@@ -101,6 +104,57 @@ func main() {
 		}
 	}()
 
+	kafkaServers := viper.GetString(config.KAFKA_BROKERS)
+	topic := viper.GetString(config.KAFKA_OUT_TOPIC)
+	conf := kafka.ConfigMap{
+		"bootstrap.servers": kafkaServers,
+	}
+	p, err := kafka.NewProducer(&conf)
+	if err != nil {
+		log.Panicf("It wasn't possible to create a producer to kafka %s", kafkaServers)
+	}
+	defer p.Close()
+	defer p.Flush(100)
+
+	// Kafka delivery channel goroutine
+	run := true
+	go func() {
+		for run {
+			select {
+			case msg := <-deliveryChan:
+				err = p.Produce(&kafka.Message{
+					TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+					Value:          msg},
+					nil,
+				)
+				if err != nil {
+					log.Error("Error sending a message to kafka topic: ", err)
+					time.Sleep(500 * time.Millisecond)
+				}
+			case <-closeDelivery:
+				log.Info("Closing delivery channel")
+				run = false
+			}
+		}
+		close(deliveryChan)
+		close(closeDelivery)
+	}()
+
+	// Kafka delivery channel listener goroutine
+	go func() {
+		for e := range p.Events() {
+			switch ev := e.(type) {
+			case *kafka.Message:
+				if ev.TopicPartition.Error != nil {
+					log.Errorf("Failed to deliver message: %v", ev.TopicPartition)
+				} else {
+					log.Infof("Successfully produced record to topic %s partition [%d] @ offset %v",
+						*ev.TopicPartition.Topic, ev.TopicPartition.Partition, ev.TopicPartition.Offset)
+				}
+			}
+		}
+	}()
+
 	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 5 seconds.
 	// kill (no param) default send syscanll.SIGTERM
 	// kill -2 is syscall.SIGINT
@@ -109,6 +163,7 @@ func main() {
 
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
+	closeDelivery <- byte(1)
 
 	log.Println("")
 	log.Info("Shutdown Server ...")
@@ -118,10 +173,8 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal("Server Shutdown:", err)
 	}
-	cp.Close(ctx)
 
 	// catching ctx.Done(). timeout of 1 seconds.
 	<-ctx.Done()
-	log.Info("timeout of 1 seconds.")
 	log.Info("Server exiting")
 }
