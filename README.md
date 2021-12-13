@@ -12,7 +12,7 @@ I preferred not to use Go-kit, so I chose several frameworks to cover various pa
 - HTTP: Gin
 - Swagger: Gin-swagger
 - Logger: Logrus
-- Kafka: Kafka-go
+- Kafka: Confluent-kafka-go
 - ORM: Gorm
 
 As a development architecture I chose something similar to Spring, with dependency injection by the constructor and an initial context concept.

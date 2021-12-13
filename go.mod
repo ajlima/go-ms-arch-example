@@ -5,7 +5,6 @@ go 1.17
 require (
 	github.com/confluentinc/confluent-kafka-go v1.7.0
 	github.com/gin-gonic/gin v1.7.7
-	github.com/jolestar/go-commons-pool/v2 v2.1.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.9.0
