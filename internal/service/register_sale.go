@@ -11,14 +11,18 @@ type RegisterSaleService struct {
 	deliveryChan       chan []byte
 }
 
-func NewRegisterSaleService(appContext *app.ApplicationContext, dc chan []byte) RegisterSaleService {
-	return RegisterSaleService{
+type Producer interface {
+	SendMessage(context.Context, []byte) error
+}
+
+func NewRegisterSaleService(appContext *app.ApplicationContext, dc chan []byte) *RegisterSaleService {
+	return &RegisterSaleService{
 		applicationContext: appContext,
 		deliveryChan:       dc,
 	}
 }
 
-func (r RegisterSaleService) SendMessage(ctx context.Context, msg []byte) (err error) {
+func (r *RegisterSaleService) SendMessage(ctx context.Context, msg []byte) (err error) {
 	r.deliveryChan <- msg
 	return nil
 }

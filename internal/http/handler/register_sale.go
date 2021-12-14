@@ -18,11 +18,11 @@ import (
 type RegisterSaleHandler struct {
 	applicationContext  *app.ApplicationContext
 	router              *gin.RouterGroup
-	registerSaleService service.RegisterSaleService
+	registerSaleService service.Producer
 }
 
-func NewRegisterSaleHandler(appContext *app.ApplicationContext, rss service.RegisterSaleService, router *gin.RouterGroup) RegisterSaleHandler {
-	h := RegisterSaleHandler{
+func NewRegisterSaleHandler(appContext *app.ApplicationContext, rss service.Producer, router *gin.RouterGroup) *RegisterSaleHandler {
+	h := &RegisterSaleHandler{
 		applicationContext:  appContext,
 		registerSaleService: rss,
 		router:              router,
@@ -31,7 +31,7 @@ func NewRegisterSaleHandler(appContext *app.ApplicationContext, rss service.Regi
 	return h
 }
 
-func (h RegisterSaleHandler) configureRoutes() {
+func (h *RegisterSaleHandler) configureRoutes() {
 	h.router.POST("/register/sale/", h.registerSale)
 }
 
@@ -47,7 +47,7 @@ func (h RegisterSaleHandler) configureRoutes() {
 // @Failure      404      		{object}  datastruct.Err
 // @Failure      500      		{object}  datastruct.Err
 // @Router       /register/sale [post]
-func (h RegisterSaleHandler) registerSale(c *gin.Context) {
+func (h *RegisterSaleHandler) registerSale(c *gin.Context) {
 	logLevel := h.applicationContext.Viper.GetString(config.LOG_LEVEL)
 	if strings.ToUpper(logLevel) == "DEBUG" {
 		defer util.TrackTime(h.applicationContext.Log, time.Now(), "%s elapsed on registerSaleHandler")

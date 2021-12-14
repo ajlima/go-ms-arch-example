@@ -44,10 +44,6 @@ func init() {
 		vip,
 		log,
 	)
-
-	// ctx := context.Background()
-	// cp = config.NewKafkaConnectionPool(ctx, appContext)
-	// appContext.SetKafkaConnectionPool(cp)
 }
 
 // @title           Microservice GO example
